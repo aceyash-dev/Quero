@@ -1,0 +1,15 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "app.quero.indevs.in"
+        }
+      ],
+      "destination": "/app.html"
+    }
+  ]
+}

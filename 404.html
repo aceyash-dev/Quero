@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>404 • Quero</title>
+
+<link rel="icon" href="icon-tint.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --bg:#090909;
+    --text:#F8F8F8;
+    --muted:#B5B5B5;
+    --gold:#D4AF37;
+    --orange:#C75B12;
+    --orange-hover:#E67E22;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    font-family:'Lexend',sans-serif;
+    background:#090909;
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:24px;
+}
+
+.card{
+
+    width:min(580px,100%);
+    background:#090909;
+
+    border:1px solid rgba(212,175,55,.15);
+    border-radius:30px;
+
+    padding:60px 42px;
+
+    text-align:center;
+
+}
+
+.logo{
+
+    width:82px;
+    height:82px;
+    object-fit:contain;
+    margin-bottom:28px;
+
+}
+
+.error{
+
+    font-family:"Playfair Display",serif;
+
+    font-size:92px;
+
+    line-height:1;
+
+    color:var(--gold);
+
+    margin-bottom:18px;
+
+}
+
+h1{
+
+    font-family:"Playfair Display",serif;
+
+    font-size:40px;
+
+    font-weight:600;
+
+    margin-bottom:18px;
+
+}
+
+p{
+
+    color:var(--muted);
+
+    line-height:1.8;
+
+    max-width:420px;
+
+    margin:auto;
+
+}
+
+.button{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-decoration:none;
+
+    margin-top:40px;
+
+    padding:14px 28px;
+
+    background:var(--orange);
+
+    color:white;
+
+    border-radius:999px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.button:hover{
+
+    background:var(--orange-hover);
+
+    transform:translateY(-2px);
+
+}
+
+.footer{
+
+    margin-top:36px;
+
+    color:#6f6f6f;
+
+    font-size:.82rem;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<img src="icon-tint.svg" class="logo" alt="Quero">
+
+<div class="error">404</div>
+
+<h1>Page not found.</h1>
+
+<p>
+
+Quero searched everywhere but couldn't find the page you requested.
+The address may be incorrect, the page may have been moved,
+or it no longer exists.
+
+</p>
+
+<a class="button" href="/">
+
+Return Home
+
+</a>
+
+<div class="footer">
+
+© 2026 Quero
+
+</div>
+
+</div>
+
+</body>
+
+</html>

@@ -35,12 +35,10 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ── No blue tap highlight on Android / iOS ── */
         * {
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ── Selection (warm sand, no blue) ── */
         ::selection {
             background: rgba(168, 115, 58, 0.18);
             color: inherit;
@@ -64,7 +62,6 @@
             box-shadow: 0 8px 26px rgba(35, 33, 29, 0.08);
         }
 
-        /* ── iOS‑style back button ── */
         .settings-header {
             margin-bottom: 28px;
             padding-bottom: 16px;
@@ -238,6 +235,7 @@
             stroke: currentColor;
         }
 
+        /* Danger Zone (only Delete Account) */
         .danger-zone {
             margin-top: 32px;
             padding-top: 24px;
@@ -283,7 +281,7 @@
             color: #B33A3A;
         }
 
-        /* ── Modal ── */
+        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -379,7 +377,6 @@
             color: #C27A7A;
         }
 
-        /* Type DELETE input */
         .type-delete-input {
             margin: 8px 0 12px;
         }
@@ -406,7 +403,6 @@
             color: #978F84;
         }
 
-        /* ── iOS slider (disabled state) ── */
         .slider-container {
             margin: 20px 0 12px;
             width: 100%;
@@ -525,7 +521,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Track fill (muted red) */
         .slider-track-fill {
             position: absolute;
             top: 0;
@@ -537,13 +532,22 @@
             transition: width 0.15s ease;
         }
 
+        /* Error message (collapsible details) */
         .error-msg {
-            font-size: 13px;
-            color: #B33A3A;
-            margin-top: 8px;
             display: none;
-            align-items: center;
-            gap: 6px;
+            align-items: flex-start;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 12px;
+            background: #FDF2F2;
+            border: 1px solid #F0D6D6;
+            border-radius: 12px;
+            color: #B33A3A;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .error-msg.show {
@@ -551,11 +555,45 @@
         }
 
         .error-msg svg {
-            width: 14px;
-            height: 14px;
+            flex-shrink: 0;
+            margin-top: 2px;
             stroke: #B33A3A;
-            stroke-width: 2;
-            fill: none;
+        }
+
+        .error-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .error-content strong {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .error-details {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #C27A7A;
+        }
+
+        .error-details summary {
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+            color: #B33A3A;
+        }
+
+        .error-details pre {
+            margin-top: 6px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'Lexend', monospace;
+            background: rgba(179, 58, 58, 0.08);
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #8C5A5A;
         }
 
         .modal-actions {
@@ -581,6 +619,37 @@
         .btn-subtle:hover {
             color: #23211D;
             background: rgba(0,0,0,0.04);
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Lexend', sans-serif;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s ease, transform 0.1s ease;
+            background: #F4EFE5;
+            color: #6F685E;
+        }
+
+        .btn:hover {
+            background: #ECE4D6;
+            color: #23211D;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: #A8733A;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #B88348;
         }
 
         .setting-item.clickable:focus-visible {
@@ -623,7 +692,8 @@
                 flex-direction: column-reverse;
                 align-items: stretch;
             }
-            .btn-subtle {
+            .btn-subtle,
+            .btn {
                 width: 100%;
                 text-align: center;
                 padding: 10px;
@@ -685,9 +755,9 @@
             </div>
         </div>
 
-        <!-- Danger Zone -->
-        <div class="danger-zone">
-            <div class="settings-group-label">Danger Zone</div>
+        <!-- Account (Log Out – neutral) -->
+        <div class="settings-group">
+            <div class="settings-group-label">Account</div>
             <div class="setting-item clickable" id="logout-btn" role="button" tabindex="0">
                 <div class="setting-item-left">
                     <span class="icon-wrap">
@@ -702,6 +772,11 @@
                     <svg viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
                 </span>
             </div>
+        </div>
+
+        <!-- Danger Zone (only Delete Account) -->
+        <div class="danger-zone">
+            <div class="settings-group-label">Danger Zone</div>
             <div class="setting-item clickable" id="delete-btn" role="button" tabindex="0">
                 <div class="setting-item-left">
                     <span class="icon-wrap">
@@ -719,7 +794,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal overlay -->
     <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-label="Dialog">
         <div class="modal" id="modal-content">
             <div id="modal-body"></div>
@@ -727,179 +802,219 @@
     </div>
 
     <script>
-        const overlay = document.getElementById('modal-overlay');
-        const modalBody = document.getElementById('modal-body');
-        const backBtn = document.getElementById('back-button');
-        const contributeBtn = document.getElementById('contribute-btn');
-        const tosBtn = document.getElementById('tos-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const deleteBtn = document.getElementById('delete-btn');
+        (function() {
+            const overlay = document.getElementById('modal-overlay');
+            const modalBody = document.getElementById('modal-body');
+            const backBtn = document.getElementById('back-button');
+            const contributeBtn = document.getElementById('contribute-btn');
+            const tosBtn = document.getElementById('tos-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const deleteBtn = document.getElementById('delete-btn');
 
-        // ── Back navigation ──
-        backBtn.addEventListener('click', () => window.location.href = '/app.html');
+            // ── Back navigation ──
+            backBtn.addEventListener('click', () => window.location.href = '/app.html');
 
-        // ── Modal system ──
-        let activeModal = null;
+            // ── Modal system ──
+            let activeModal = null;
 
-        function openModal(html, type) {
-            if (activeModal) { activeModal.resolve(null); activeModal = null; }
-            modalBody.innerHTML = html;
-            overlay.classList.add('open');
-            activeModal = { resolve: null, type };
-            return new Promise((resolve) => {
-                activeModal.resolve = resolve;
-                const cancelBtn = document.getElementById('modal-cancel');
-                if (cancelBtn) cancelBtn.addEventListener('click', () => closeModal(false));
+            function openModal(html, type) {
+                if (activeModal) {
+                    activeModal.resolve(null);
+                    activeModal = null;
+                }
+                modalBody.innerHTML = html;
+                overlay.classList.add('open');
+                activeModal = { resolve: null, type };
+                return new Promise((resolve) => {
+                    activeModal.resolve = resolve;
+                    const cancelBtn = document.getElementById('modal-cancel');
+                    if (cancelBtn) cancelBtn.addEventListener('click', () => closeModal(false));
+                });
+            }
+
+            function closeModal(result) {
+                overlay.classList.remove('open');
+                if (activeModal) {
+                    activeModal.resolve(result);
+                    activeModal = null;
+                }
+                document.activeElement?.blur();
+            }
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay && activeModal && activeModal.type !== 'delete') closeModal(false);
             });
-        }
 
-        function closeModal(result) {
-            overlay.classList.remove('open');
-            if (activeModal) { activeModal.resolve(result); activeModal = null; }
-            document.activeElement?.blur();
-        }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && overlay.classList.contains('open') && activeModal && activeModal.type !== 'delete') {
+                    closeModal(false);
+                }
+            });
 
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay && activeModal && activeModal.type !== 'delete') closeModal(false);
-        });
+            // ── Logout modal ──
+            function buildLogoutModal() {
+                return `
+                    <div class="modal-icon">
+                        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    </div>
+                    <h2>Log out?</h2>
+                    <p>You will be signed out from this device. You can sign in again anytime.</p>
+                    <div class="modal-actions">
+                        <button class="btn-subtle" id="modal-cancel">Cancel</button>
+                        <button class="btn btn-primary" id="modal-confirm">Log Out</button>
+                    </div>`;
+            }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && overlay.classList.contains('open') && activeModal && activeModal.type !== 'delete') closeModal(false);
-        });
-
-        // ── Logout modal ──
-        function buildLogoutModal() {
-            return `
-                <div class="modal-icon">
-                    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                </div>
-                <h2>Log out?</h2>
-                <p>You will be signed out from this device. You can sign in again anytime.</p>
-                <div class="modal-actions">
-                    <button class="btn-subtle" id="modal-cancel">Cancel</button>
-                    <button class="btn btn-primary" id="modal-confirm">Log Out</button>
-                </div>`;
-        }
-
-        // ── Delete modal (two‑step: type DELETE, then slide) ──
-        function buildDeleteModal() {
-            return `
-                <div class="modal-icon danger">
-                    <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                </div>
-                <h2>Delete Account</h2>
-                <p>This permanently removes:</p>
-                <ul class="modal-destructive-list">
-                    <li>Clerk account</li>
-                    <li>Supabase conversations</li>
-                    <li>Preferences &amp; settings</li>
-                    <li>Synced data</li>
-                </ul>
-                <p class="modal-sub">Uploaded files are temporary and are already discarded after processing.</p>
-                <div class="type-delete-input">
-                    <input type="text" id="delete-input" placeholder="Type DELETE" autocomplete="off" spellcheck="false" />
-                </div>
-                <div class="slider-container disabled" id="slider-container">
-                    <div class="slider-track" id="slider-track">
-                        <div class="slider-track-fill" id="slider-fill"></div>
-                        <div class="slider-label" id="slider-label">Type DELETE first</div>
-                        <div class="slider-handle" id="slider-handle">
-                            <svg class="chevron-icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
-                            <div class="spinner"></div>
-                            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+            // ── Delete modal (two‑step: type DELETE, then slide) ──
+            function buildDeleteModal() {
+                return `
+                    <div class="modal-icon danger">
+                        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    </div>
+                    <h2>Delete Account</h2>
+                    <p>This permanently removes:</p>
+                    <ul class="modal-destructive-list">
+                        <li>Clerk account</li>
+                        <li>Supabase conversations</li>
+                        <li>Preferences &amp; settings</li>
+                        <li>Synced data</li>
+                    </ul>
+                    <p class="modal-sub">Uploaded files are temporary and are already discarded after processing.</p>
+                    <div class="type-delete-input">
+                        <input type="text" id="delete-input" placeholder="Type DELETE" autocomplete="off" spellcheck="false" />
+                    </div>
+                    <div class="slider-container disabled" id="slider-container">
+                        <div class="slider-track" id="slider-track">
+                            <div class="slider-track-fill" id="slider-fill"></div>
+                            <div class="slider-label" id="slider-label">Type DELETE first</div>
+                            <div class="slider-handle" id="slider-handle">
+                                <svg class="chevron-icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                                <div class="spinner"></div>
+                                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="error-msg" id="delete-error">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <span id="delete-error-text"></span>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn-subtle" id="modal-cancel">Cancel</button>
-                </div>`;
-        }
-
-        function bindDeleteControls() {
-            const input = document.getElementById('delete-input');
-            const container = document.getElementById('slider-container');
-            const label = document.getElementById('slider-label');
-            const track = document.getElementById('slider-track');
-            const handle = document.getElementById('slider-handle');
-            const fill = document.getElementById('slider-fill');
-            const errorEl = document.getElementById('delete-error');
-            const errorText = document.getElementById('delete-error-text');
-            if (!input || !container) return;
-
-            let sliderEnabled = false;
-            let deleteTriggered = false;
-            let dragging = false;
-
-            function enableSlider() {
-                sliderEnabled = true;
-                container.classList.remove('disabled');
-                label.textContent = 'Slide to delete';
-                label.style.opacity = '1';
+                    <div class="error-msg" id="delete-error">
+                        <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <div class="error-content">
+                            <strong id="delete-error-friendly">Unable to delete your account.</strong>
+                            <details class="error-details" id="delete-error-details" hidden>
+                                <summary>Technical details</summary>
+                                <pre id="delete-error-text"></pre>
+                            </details>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-subtle" id="modal-cancel">Cancel</button>
+                    </div>`;
             }
 
-            function disableSlider() {
-                sliderEnabled = false;
-                container.classList.add('disabled');
-                label.textContent = 'Type DELETE first';
-                label.style.opacity = '1';
-                handle.style.left = '4px';
-                fill.style.width = '0';
-                track.classList.remove('active');
-                handle.classList.remove('loading', 'success');
-                deleteTriggered = false;
-            }
+            function bindDeleteControls() {
+                const input = document.getElementById('delete-input');
+                const container = document.getElementById('slider-container');
+                const label = document.getElementById('slider-label');
+                const track = document.getElementById('slider-track');
+                const handle = document.getElementById('slider-handle');
+                const fill = document.getElementById('slider-fill');
+                const errorEl = document.getElementById('delete-error');
+                const errorFriendly = document.getElementById('delete-error-friendly');
+                const errorDetails = document.getElementById('delete-error-details');
+                const errorText = document.getElementById('delete-error-text');
 
-            function checkInput() {
-                const val = input.value.trim();
-                if (val === 'DELETE') {
-                    if (!sliderEnabled && !deleteTriggered) enableSlider();
-                } else {
-                    if (sliderEnabled) disableSlider();
+                if (!input || !container) return;
+
+                let sliderEnabled = false;
+                let deleteTriggered = false;
+                let dragging = false;
+
+                function enableSlider() {
+                    sliderEnabled = true;
+                    container.classList.remove('disabled');
+                    label.textContent = 'Slide to delete';
+                    label.style.opacity = '1';
                 }
-            }
 
-            input.addEventListener('input', checkInput);
-
-            const maxLeft = () => track.offsetWidth - handle.offsetWidth - 4;
-
-            function updatePosition(clientX) {
-                if (!sliderEnabled || deleteTriggered || handle.classList.contains('loading')) return;
-                const rect = track.getBoundingClientRect();
-                let dx = clientX - rect.left - handle.offsetWidth/2;
-                dx = Math.max(4, Math.min(dx, maxLeft()));
-                handle.style.left = dx + 'px';
-                const progress = dx / maxLeft();
-                fill.style.width = (progress * 100) + '%';
-                label.style.opacity = 1 - progress;
-                if (progress > 0.05) track.classList.add('active');
-                else track.classList.remove('active');
-                if (progress >= 0.95 && !deleteTriggered) {
-                    deleteTriggered = true;
-                    performDelete();
+                function disableSlider() {
+                    sliderEnabled = false;
+                    container.classList.add('disabled');
+                    label.textContent = 'Type DELETE first';
+                    label.style.opacity = '1';
+                    handle.style.left = '4px';
+                    fill.style.width = '0';
+                    track.classList.remove('active');
+                    handle.classList.remove('loading', 'success');
+                    deleteTriggered = false;
                 }
-            }
 
-            function performDelete() {
-                handle.classList.add('loading');
-                handle.style.left = maxLeft() + 'px';
-                fill.style.width = '100%';
-                label.textContent = 'Deleting account…';
-                label.style.opacity = '1';
-                track.classList.add('active');
-                if (errorEl) errorEl.classList.remove('show');
+                function checkInput() {
+                    if (input.value.trim() === 'DELETE') {
+                        if (!sliderEnabled && !deleteTriggered) enableSlider();
+                    } else {
+                        if (sliderEnabled) disableSlider();
+                    }
+                }
 
-                fetch('/api/delete-account', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'same-origin',
-                })
-                .then(res => {
-                    if (res.ok) {
-                        // Success feedback
+                input.addEventListener('input', checkInput);
+
+                function maxLeft() {
+                    return track.offsetWidth - handle.offsetWidth - 4;
+                }
+
+                function updatePosition(clientX) {
+                    if (!sliderEnabled || deleteTriggered || handle.classList.contains('loading')) return;
+                    const rect = track.getBoundingClientRect();
+                    let dx = clientX - rect.left - handle.offsetWidth / 2;
+                    dx = Math.max(4, Math.min(dx, maxLeft()));
+                    handle.style.left = dx + 'px';
+                    const progress = dx / maxLeft();
+                    fill.style.width = (progress * 100) + '%';
+                    label.style.opacity = 1 - progress;
+                    track.classList.toggle('active', progress > 0.05);
+                    if (progress >= 0.95 && !deleteTriggered) {
+                        deleteTriggered = true;
+                        performDelete();
+                    }
+                }
+
+                async function performDelete() {
+                    handle.classList.add('loading');
+                    handle.style.left = maxLeft() + 'px';
+                    fill.style.width = '100%';
+                    label.textContent = 'Deleting account…';
+                    label.style.opacity = '1';
+                    track.classList.add('active');
+                    errorEl.classList.remove('show');
+
+                    try {
+                        // Obtain Clerk session token
+                        if (!window.Clerk || !window.Clerk.session) {
+                            throw new Error('Clerk not initialized');
+                        }
+                        const token = await window.Clerk.session.getToken();
+
+                        const res = await fetch('/api/delete-account', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            credentials: 'same-origin',
+                        });
+
+                        const text = await res.text();
+
+                        if (!res.ok) {
+                            let errorMessage = 'Something went wrong.';
+                            try {
+                                const data = JSON.parse(text);
+                                errorMessage = data.error || errorMessage;
+                            } catch (e) {
+                                errorMessage = text || `${res.status} ${res.statusText}`;
+                            }
+                            throw new Error(errorMessage);
+                        }
+
+                        // Success
                         handle.classList.remove('loading');
                         handle.classList.add('success');
                         label.textContent = '✓ Deleted';
@@ -908,91 +1023,100 @@
                             closeModal(true);
                             window.location.href = '/';
                         }, 800);
-                    } else {
-                        return res.json().then(data => { throw new Error(data.error || 'Something went wrong.'); });
-                    }
-                })
-                .catch(err => {
-                    if (errorEl && errorText) {
-                        errorText.textContent = err.message;
+                    } catch (err) {
+                        // Show friendly message + collapsible details
+                        errorFriendly.textContent = 'Unable to delete your account.';
+                        errorDetails.hidden = false;
+                        errorText.textContent = err.message || String(err);
                         errorEl.classList.add('show');
+
+                        // Reset slider
+                        handle.classList.remove('loading', 'success');
+                        handle.style.left = '4px';
+                        fill.style.width = '0';
+                        label.textContent = sliderEnabled ? 'Slide to delete' : 'Type DELETE first';
+                        label.style.opacity = '1';
+                        track.classList.remove('active');
+                        deleteTriggered = false;
                     }
-                    // Reset slider
-                    handle.classList.remove('loading', 'success');
-                    handle.style.left = '4px';
-                    fill.style.width = '0';
-                    label.textContent = sliderEnabled ? 'Slide to delete' : 'Type DELETE first';
-                    label.style.opacity = '1';
-                    track.classList.remove('active');
-                    deleteTriggered = false;
+                }
+
+                function onPointerDown(e) {
+                    if (!sliderEnabled || deleteTriggered || handle.classList.contains('loading')) return;
+                    e.preventDefault();
+                    dragging = true;
+                    handle.setPointerCapture(e.pointerId);
+                }
+
+                function onPointerMove(e) {
+                    if (!dragging || !sliderEnabled || deleteTriggered || handle.classList.contains('loading')) return;
+                    updatePosition(e.clientX);
+                }
+
+                function onPointerUp() {
+                    if (!dragging) return;
+                    dragging = false;
+                    if (!deleteTriggered) {
+                        handle.style.left = '4px';
+                        fill.style.width = '0';
+                        label.style.opacity = '1';
+                        track.classList.remove('active');
+                    }
+                }
+
+                handle.addEventListener('pointerdown', onPointerDown);
+                handle.addEventListener('pointermove', onPointerMove);
+                handle.addEventListener('pointerup', onPointerUp);
+                handle.addEventListener('pointercancel', onPointerUp);
+
+                track.addEventListener('pointerdown', (e) => {
+                    if (e.target === track && sliderEnabled && !deleteTriggered && !handle.classList.contains('loading')) {
+                        const rect = track.getBoundingClientRect();
+                        const dx = e.clientX - rect.left - handle.offsetWidth / 2;
+                        handle.style.left = Math.max(4, Math.min(dx, maxLeft())) + 'px';
+                        onPointerDown(e);
+                    }
                 });
+
+                window.addEventListener('resize', () => {
+                    if (!deleteTriggered && !handle.classList.contains('loading')) {
+                        handle.style.left = '4px';
+                        fill.style.width = '0';
+                    }
+                });
+
+                checkInput();
             }
 
-            // Pointer events
-            function onPointerDown(e) {
-                if (!sliderEnabled || deleteTriggered || handle.classList.contains('loading')) return;
-                e.preventDefault();
-                dragging = true;
-                handle.setPointerCapture(e.pointerId);
-            }
+            function showLogoutModal() {
+    openModal(buildLogoutModal(), "logout");
 
-            function onPointerMove(e) {
-                if (!dragging || !sliderEnabled || deleteTriggered || handle.classList.contains('loading')) return;
-                updatePosition(e.clientX);
-            }
+    const confirmBtn = document.getElementById("modal-confirm");
 
-            function onPointerUp(e) {
-                if (!dragging) return;
-                dragging = false;
-                if (!deleteTriggered) {
-                    handle.style.left = '4px';
-                    fill.style.width = '0';
-                    label.style.opacity = '1';
-                    track.classList.remove('active');
-                }
-            }
+    confirmBtn.addEventListener("click", async () => {
+        closeModal(true);
 
-            handle.addEventListener('pointerdown', onPointerDown);
-            handle.addEventListener('pointermove', onPointerMove);
-            handle.addEventListener('pointerup', onPointerUp);
-            handle.addEventListener('pointercancel', onPointerUp);
-
-            track.addEventListener('pointerdown', (e) => {
-                if (e.target === track && sliderEnabled && !deleteTriggered && !handle.classList.contains('loading')) {
-                    const rect = track.getBoundingClientRect();
-                    const dx = e.clientX - rect.left - handle.offsetWidth/2;
-                    handle.style.left = Math.max(4, Math.min(dx, maxLeft())) + 'px';
-                    onPointerDown(e);
-                }
-            });
-
-            window.addEventListener('resize', () => {
-                if (!deleteTriggered && !handle.classList.contains('loading')) {
-                    handle.style.left = '4px';
-                    fill.style.width = '0';
-                }
-            });
-
-            checkInput();
+        if (window.Clerk?.signOut) {
+            await window.Clerk.signOut();
         }
 
-        async function showLogoutModal() {
-            await openModal(buildLogoutModal(), 'logout');
-            const confirmBtn = document.getElementById('modal-confirm');
-            if (confirmBtn) {
-                confirmBtn.addEventListener('click', () => {
-                    closeModal(true);
-                    window.location.href = '/';
-                });
-            }
-            return new Promise(resolve => {
-                const orig = closeModal;
-                closeModal = (val) => { orig(val); resolve(val); closeModal = orig; };
-            });
-        }
+        location.replace("/");
+    });
 
-        async function showDeleteModal() {
-    openModal(buildDeleteModal(), 'delete');
+    return new Promise(resolve => {
+        const orig = closeModal;
+
+        closeModal = (val) => {
+            orig(val);
+            resolve(val);
+            closeModal = orig;
+        };
+    });
+}
+
+            function showDeleteModal() {
+    openModal(buildDeleteModal(), "delete");
+
     bindDeleteControls();
 
     return new Promise(resolve => {
@@ -1003,19 +1127,20 @@
             closeModal = orig;
         };
     });
-        }
+}
 
-        function makeAccessible(el, handler) {
-            el.addEventListener('click', handler);
-            el.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
-            });
-        }
+            function makeAccessible(el, handler) {
+                el.addEventListener('click', handler);
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+                });
+            }
 
-        makeAccessible(contributeBtn, () => window.open('https://github.com/aceyash-dev/Quero', '_blank'));
-        makeAccessible(tosBtn, () => window.location.href = '/terms.html');
-        makeAccessible(logoutBtn, async () => await showLogoutModal());
-        makeAccessible(deleteBtn, async () => await showDeleteModal());
+            makeAccessible(contributeBtn, () => window.open('https://github.com/aceyash-dev/Quero', '_blank'));
+            makeAccessible(tosBtn, () => window.location.href = '/terms.html');
+            makeAccessible(logoutBtn, () => showLogoutModal());
+            makeAccessible(deleteBtn, () => showDeleteModal());
+        })();
     </script>
 </body>
 </html>

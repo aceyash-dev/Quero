@@ -1,42 +1,27 @@
+// /api/delete-account.js (or .ts)
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
-import { clerkClient, getAuth } from "@clerk/nextjs/server";
 
 const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  try {
-    const { userId } = getAuth(req);
-
+export async function POST() {
+    const { userId } = await auth();
     if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
+        return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Delete user data from Supabase
+    // Delete all user data (customise tables as needed)
     await supabase.from("messages").delete().eq("user_id", userId);
     await supabase.from("chats").delete().eq("user_id", userId);
     await supabase.from("settings").delete().eq("user_id", userId);
-    await supabase.from("profiles").delete().eq("id", userId);
+    // … any other user‑related tables
 
     // Delete Clerk account
     const clerk = await clerkClient();
     await clerk.users.deleteUser(userId);
 
-    return res.status(200).json({
-      success: true
-    });
-
-  } catch (err) {
-    console.error(err);
-
-    return res.status(500).json({
-      error: "Failed to delete account."
-    });
-  }
-                                                }
+    return Response.json({ success: true });
+}

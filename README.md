@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./icon.svg" alt="Quero Logo" width="120"/>
+<img src="icon.svg" alt="Quero Logo" width="120"/>
 
 # Quero
 

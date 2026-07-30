@@ -1,27 +1,37 @@
-// /api/delete-account.js (or .ts)
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { createClerkClient } from "@clerk/backend";
 import { createClient } from "@supabase/supabase-js";
 
+const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export async function POST() {
-    const { userId } = await auth();
-    if (!userId) {
-        return Response.json({ error: "Unauthorized" }, { status: 401 });
+export default async function handler(req, res) {
+    if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: "Missing token" });
+
+    const token = authHeader.replace("Bearer ", "");
+
+    try {
+        // Verify Clerk JWT – `verifyToken()` is the correct method in @clerk/backend
+        const payload = await clerk.verifyToken(token);
+        const userId = payload.sub;
+
+        // Delete Supabase rows (use an array for maintainability)
+        const tables = ["messages", "chats", "settings"];
+        for (const table of tables) {
+            await supabase.from(table).delete().eq("user_id", userId);
+        }
+
+        // Delete Clerk user
+        await clerk.users.deleteUser(userId);
+
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        console.error("Delete account error:", error);
+        return res.status(500).json({ error: "Failed to delete account" });
     }
-
-    // Delete all user data (customise tables as needed)
-    await supabase.from("messages").delete().eq("user_id", userId);
-    await supabase.from("chats").delete().eq("user_id", userId);
-    await supabase.from("settings").delete().eq("user_id", userId);
-    // … any other user‑related tables
-
-    // Delete Clerk account
-    const clerk = await clerkClient();
-    await clerk.users.deleteUser(userId);
-
-    return Response.json({ success: true });
 }

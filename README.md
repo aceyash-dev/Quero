@@ -1,10 +1,13 @@
-# <img src="icon.svg" width="34" align="center"> Quero
+<p align="center">
+  <img src="icon.svg" width="96" alt="Quero">
+</p>
 
-> **Curiosity, Answered.**
+<h1 align="center">Quero</h1>
 
-Quero is a modern AI workspace where conversations become actions.
-
-Research the web, automate workflows, connect your favorite services, manage files, and work with multiple AI models from one beautiful interface.
+<p align="center">
+  <strong>Curiosity, Answered.</strong><br>
+  Modern AI workspace for conversations that become actions.
+</p>
 
 ---
 
@@ -12,122 +15,30 @@ Research the web, automate workflows, connect your favorite services, manage fil
 
 Most AI apps answer questions.
 
-Quero helps finish work.
+**Quero helps finish work.**
 
-Instead of switching between browsers, documents, APIs, and AI chatbots, everything lives in one workspace.
+Research the web, automate workflows, connect your tools, manage files, and use multiple AI models from one clean workspace.
 
 ---
 
 ## 🚀 Features
 
-- 🧠 Multi-provider AI support
-  - OpenAI
-  - Anthropic
-  - Google Gemini
-  - Meta
-  - Local models
-  - Bring Your Own API Keys
-
-- 🔌 MCP integrations
-
+- 🧠 Multiple AI providers
 - 🌐 Web research
-
-- 📄 File management
-
-- ⚙️ Workflow automation
-
-- 💬 Persistent conversations
-
-- 📝 AI memory
-
-- 🔒 Privacy-first architecture
-
-- 🎨 Beautiful minimalist interface
+- 🔌 MCP & API integrations
+- 📁 File management
+- ⚡ Workflow automation
+- 💾 Persistent memory
+- 🔒 Privacy-first
 
 ---
 
 ## 🌍 Website
 
-https://quero.indevs.in
+**https://quero.indevs.in**
 
 ---
 
-## 📸 Preview
-
-Coming soon.
-
----
-
-## 💡 Built For
-
-- Students
-- Developers
-- Researchers
-- Writers
-- Designers
-- Professionals
-- Curious people
-
----
-
-## 🛠 Tech Stack
-
-- HTML5
-- CSS3
-- JavaScript
-- Supabase
-- MCP
-- Multiple AI Providers
-
----
-
-## Philosophy
-
-Technology should disappear.
-
-The best tools don't ask for attention.
-
-They simply help you think, create, and finish what you started.
-
-Quero is designed around that belief.
-
----
-
-## Roadmap
-
-- [x] Landing page
-- [x] AI workspace
-- [x] User profiles
-- [x] Provider management
-- [ ] Chat history sync
-- [ ] File uploads
-- [ ] Voice conversations
-- [ ] Plugin marketplace
-- [ ] Native Android app
-- [ ] Native Windows app
-
----
-
-## Contributing
-
-Ideas, bug reports, and pull requests are always welcome.
-
-Every improvement helps make Quero a little better.
-
----
-
-## License
-
-See the LICENSE file.
-
----
-
-<div align="center">
-
-### Curiosity, Answered.
-
-Made with ☕, sleepless nights, and unreasonable attention to detail.
-
-**The Ace Base © 2026**
-
-</div>
+<p align="center">
+Made with ☕ by <strong>The Ace Base</strong>
+</p>

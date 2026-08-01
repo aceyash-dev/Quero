@@ -1,0 +1,13 @@
+# Quero
+
+Official website:
+https://quero.indevs.in
+
+Description:
+Quero is an AI workspace for research, AI conversations and file management.
+
+Privacy:
+https://quero.indevs.in/privacy
+
+Terms:
+https://quero.indevs.in/terms

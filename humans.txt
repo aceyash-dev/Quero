@@ -1,0 +1,15 @@
+/* TEAM */
+
+Organization: The Ace Base
+
+Project: Quero
+
+Website:
+https://quero.indevs.in
+
+Built with:
+HTML
+CSS
+JavaScript
+
+Made in India 🇮🇳

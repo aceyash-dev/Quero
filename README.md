@@ -1,80 +1,133 @@
-<div align="center">
+# <img src="icon.svg" width="34" align="center"> Quero
 
-<img src="icon.svg" alt="Quero Logo" width="120"/>
+> **Curiosity, Answered.**
 
-# Quero
+Quero is a modern AI workspace where conversations become actions.
 
-### Curiosity, Answered.
-
-**Quero** is an intelligent AI assistant built to help you think, create, code, learn, and explore with clarity.
-
-Built with a focus on speed, simplicity, and thoughtful interactions, Quero transforms questions into understanding and ideas into action.
-
-**By [AceYash](https://github.com/aceyash-dev)**
-
-</div>
+Research the web, automate workflows, connect your favorite services, manage files, and work with multiple AI models from one beautiful interface.
 
 ---
 
-## ✨ Features
+## ✨ Why Quero?
 
-- 💬 Natural conversations
-- 🧠 Intelligent reasoning
-- ✍️ Writing assistance
-- 💻 Coding & debugging
-- 📚 Learning and research
-- ⚡ Fast responses
-- 🎯 Clean, distraction-free experience
+Most AI apps answer questions.
+
+Quero helps finish work.
+
+Instead of switching between browsers, documents, APIs, and AI chatbots, everything lives in one workspace.
+
+---
+
+## 🚀 Features
+
+- 🧠 Multi-provider AI support
+  - OpenAI
+  - Anthropic
+  - Google Gemini
+  - Meta
+  - Local models
+  - Bring Your Own API Keys
+
+- 🔌 MCP integrations
+
+- 🌐 Web research
+
+- 📄 File management
+
+- ⚙️ Workflow automation
+
+- 💬 Persistent conversations
+
+- 📝 AI memory
+
+- 🔒 Privacy-first architecture
+
+- 🎨 Beautiful minimalist interface
+
+---
+
+## 🌍 Website
+
+https://quero.indevs.in
+
+---
+
+## 📸 Preview
+
+Coming soon.
+
+---
+
+## 💡 Built For
+
+- Students
+- Developers
+- Researchers
+- Writers
+- Designers
+- Professionals
+- Curious people
+
+---
+
+## 🛠 Tech Stack
+
+- HTML5
+- CSS3
+- JavaScript
+- Supabase
+- MCP
+- Multiple AI Providers
 
 ---
 
 ## Philosophy
 
-Quero is inspired by a simple belief:
+Technology should disappear.
 
-> Every meaningful discovery begins with a question.
+The best tools don't ask for attention.
 
-Instead of overwhelming users with complexity, Quero aims to provide focused, reliable, and intuitive assistance for everyday work and creativity.
+They simply help you think, create, and finish what you started.
 
----
-
-## Vision
-
-Build an AI that feels calm, dependable, and genuinely useful.
-
-No unnecessary complexity.
-
-Just intelligence that helps.
+Quero is designed around that belief.
 
 ---
 
-## Status
+## Roadmap
 
-> 🚧 Under active development.
-
-The public website is coming soon.
+- [x] Landing page
+- [x] AI workspace
+- [x] User profiles
+- [x] Provider management
+- [ ] Chat history sync
+- [ ] File uploads
+- [ ] Voice conversations
+- [ ] Plugin marketplace
+- [ ] Native Android app
+- [ ] Native Windows app
 
 ---
 
-## Branding
+## Contributing
 
-- **Name:** Quero
-- **Created by:** The Ace Base
-- **Designed by:** AceYash
-- **Logo:** `icon.svg`
+Ideas, bug reports, and pull requests are always welcome.
+
+Every improvement helps make Quero a little better.
 
 ---
 
 ## License
 
-Source code is licensed under the **Apache License 2.0**.
-
-Brand assets, including the **Quero** name, logo, and visual identity, are © The Ace Base. All rights reserved.
+See the LICENSE file.
 
 ---
 
 <div align="center">
 
-Made with curiosity by **AceYash**.
+### Curiosity, Answered.
+
+Made with ☕, sleepless nights, and unreasonable attention to detail.
+
+**The Ace Base © 2026**
 
 </div>

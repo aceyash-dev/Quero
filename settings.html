@@ -3,20 +3,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#FAF8F2">
-<meta name="color-scheme" content="light">
     <title>Settings · Quero</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="icon" type="image/svg+xml" href="/icon.svg">
     <link
         href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet"
     />
 
     <style>
-        /* ... all your existing CSS remains exactly the same ... */
         *,
         *::before,
         *::after {
@@ -239,6 +235,7 @@
             stroke: currentColor;
         }
 
+        /* Danger Zone (only Delete Account) */
         .danger-zone {
             margin-top: 32px;
             padding-top: 24px;
@@ -284,6 +281,7 @@
             color: #B33A3A;
         }
 
+        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -534,6 +532,7 @@
             transition: width 0.15s ease;
         }
 
+        /* Error message (collapsible details) */
         .error-msg {
             display: none;
             align-items: flex-start;
@@ -802,7 +801,7 @@
         </div>
     </div>
 
-    <!-- Clerk SDK -->
+    <!-- ─── Clerk SDK ─── Replace the key below with your own publishable key ─── -->
     <script
         async
         crossorigin="anonymous"
@@ -812,9 +811,9 @@
 
     <script>
         (function() {
-            // ── Wait for Clerk to load, then initialize the page ──
+            // ── Wait for Clerk to load, then run the page ──
             async function init() {
-                // Wait for Clerk SDK to be available
+                // 1. Wait until window.Clerk is defined
                 if (!window.Clerk) {
                     await new Promise(resolve => {
                         const check = () => {
@@ -825,16 +824,16 @@
                     });
                 }
 
-                // Load Clerk (shows sign-in UI if not authenticated)
+                // 2. Load Clerk (shows sign‑in UI if the user isn’t authenticated)
                 await window.Clerk.load();
 
-                // Redirect if not signed in
+                // 3. Protect the page – redirect to /app if not signed in
                 if (!window.Clerk.user) {
-                    window.location.href = '/app.html';
+                    window.location.href = '/app';
                     return;
                 }
 
-                // ── Now Clerk is ready, run the settings logic ──
+                // 4. Clerk is ready – now run your existing settings logic
                 setupSettingsPage();
             }
 
@@ -901,7 +900,7 @@
                         </div>`;
                 }
 
-                // ── Delete modal (two‑step: type DELETE, then slide) ──
+                // ── Delete modal ──
                 function buildDeleteModal() {
                     return `
                         <div class="modal-icon danger">
@@ -1022,7 +1021,7 @@
                         errorEl.classList.remove('show');
 
                         try {
-                            // Obtain Clerk session token — Clerk is guaranteed loaded now
+                            // Obtain Clerk session token (now guaranteed to work)
                             const token = await window.Clerk.session.getToken();
 
                             const res = await fetch('/api/delete-account', {

@@ -12,19 +12,65 @@
         if (typeof Clerk === 'undefined') { showGuestUI(); return; }
         try {
             await Clerk.load();
+
+            // 1. Wait for Clerk properly
+            if (!Clerk.loaded || !Clerk.isSignedIn) {
+                showGuestUI();
+                return;
+            }
+
             const clerkUser = Clerk.user;
-            if (!clerkUser) { showGuestUI(); return; }
+
+            // 9. Cache profile – try sessionStorage first for instant display
+            const cachedProfile = sessionStorage.getItem('cachedProfile');
+            if (cachedProfile) {
+                const parsed = JSON.parse(cachedProfile);
+                currentProfile = parsed;
+                showAuthenticatedUI(parsed);
+            }
+
             await ensureProfile(clerkUser);
             const { data: profile, error } = await supabase
                 .from("profiles")
                 .select("id, name, avatar")
                 .eq("clerk_id", clerkUser.id)
                 .single();
-            if (error || !profile) { showGuestUI(); return; }
+
+            // 4. Print the profile query
+            console.log(profile);
+            console.log(error);
+
+            // 5. Handle missing profile better
+            if (error) {
+                console.error(error);
+            }
+            if (!profile) {
+                await ensureProfile(clerkUser);
+                const { data } = await supabase
+                    .from("profiles")
+                    .select("*")
+                    .eq("clerk_id", clerkUser.id)
+                    .single();
+
+                if (!data) {
+                    showGuestUI();
+                    return;
+                }
+                currentProfile = data;
+                showAuthenticatedUI(data);
+                sessionStorage.setItem('cachedProfile', JSON.stringify(data));
+                return;
+            }
+
             currentProfile = profile;
+            sessionStorage.setItem('cachedProfile', JSON.stringify(profile));
             showAuthenticatedUI(profile);
+
         } catch (e) {
-            console.error("Auth error", e);
+            // 2. Log failures while debugging
+            console.error("Auth failed:", e);
+            console.log("Session:", Clerk.session);
+            console.log("User:", Clerk.user);
             showGuestUI();
         }
     }
@@ -36,22 +82,27 @@
             .eq("clerk_id", clerkUser.id)
             .maybeSingle();
         if (!data) {
-            await supabase.from("profiles").insert({
+            // 3. Don't ignore insert errors
+            const { error } = await supabase.from("profiles").insert({
                 clerk_id: clerkUser.id,
                 name: clerkUser.firstName || clerkUser.username ||
                     (clerkUser.emailAddresses?.[0]?.emailAddress?.split('@')[0]) || 'there',
                 email: clerkUser.primaryEmailAddress?.emailAddress || '',
                 avatar: clerkUser.imageUrl || null
             });
+            if (error) {
+                console.error("Profile insert error:", error);
+            }
         }
     }
 
     async function openSignIn() {
         if (!window.Clerk) return;
         await Clerk.load();
+        // 7. Better sign in – relative paths
         await Clerk.redirectToSignIn({
-            afterSignInUrl: location.origin + "/app.html",
-            afterSignUpUrl: location.origin + "/app.html"
+            afterSignInUrl: "/app.html",
+            afterSignUpUrl: "/app.html"
         });
     }
 
@@ -65,8 +116,10 @@
         document.getElementById('statusLine').textContent = 'Ready to start something new?';
 
         const avatarEl = document.getElementById('profileAvatar');
-        if (profile.avatar) {
-            avatarEl.innerHTML = `<img src="${profile.avatar}" alt="Profile" class="avatar-img" style="width:100%;height:100%;border-radius:50%;">`;
+        // 10. Show Clerk's avatar directly
+        const avatarUrl = Clerk.user?.imageUrl;
+        if (avatarUrl) {
+            avatarEl.innerHTML = `<img src="${avatarUrl}" alt="Profile" class="avatar-img" style="width:100%;height:100%;border-radius:50%;">`;
         } else {
             avatarEl.textContent = (profile.name || 'A').charAt(0).toUpperCase();
         }
@@ -74,8 +127,8 @@
         const sidebarAvatar = document.getElementById('sidebarAvatarSmall');
         const sidebarName = document.getElementById('sidebarUserName');
         const sidebarAction = document.getElementById('sidebarUserAction');
-        if (profile.avatar) {
-            sidebarAvatar.innerHTML = `<img src="${profile.avatar}" alt="Profile">`;
+        if (avatarUrl) {
+            sidebarAvatar.innerHTML = `<img src="${avatarUrl}" alt="Profile">`;
         } else {
             sidebarAvatar.textContent = (profile.name || 'A').charAt(0).toUpperCase();
         }
@@ -216,6 +269,21 @@
         const chats = await fetchRecentChats();
         renderRecentChats(chats);
         lucide.createIcons();
+
+        // 6. Dispatch the dashboard event
+        window.__dashboardDataReady = true;
+        document.dispatchEvent(new CustomEvent("dashboard-data-ready"));
+    }
+
+    // 8. Auth state listener – react to sign in/out
+    if (typeof Clerk !== 'undefined') {
+        Clerk.addListener(({ user }) => {
+            if (user) {
+                initDashboard();
+            } else {
+                showGuestUI();
+            }
+        });
     }
 
     initDashboard();

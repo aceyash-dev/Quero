@@ -1,4 +1,3 @@
-// Code Commenter
 (function() {
     // ── Supabase Client ─────────────────────────────
     const SUPABASE_URL = "https://ytrxzjknmfyrifcdupbc.supabase.co";      
@@ -13,22 +12,41 @@
         try {
             await Clerk.load();
 
-            // 1. Wait for Clerk properly
+            // 1. Ensure Clerk is truly ready
             if (!Clerk.loaded || !Clerk.isSignedIn) {
                 showGuestUI();
                 return;
             }
 
-            const clerkUser = Clerk.user;
-
-            // 9. Cache profile – try sessionStorage first for instant display
-            const cachedProfile = sessionStorage.getItem('cachedProfile');
-            if (cachedProfile) {
-                const parsed = JSON.parse(cachedProfile);
-                currentProfile = parsed;
-                showAuthenticatedUI(parsed);
+            // 2. Register listener once, inside loaded Clerk – no more "is not a function"
+            if (!window.__clerkListenerAdded) {
+                window.__clerkListenerAdded = true;
+                Clerk.addListener(({ user }) => {
+                    if (user) {
+                        // Call initAuth again to refresh session/profile
+                        initAuth();
+                    } else {
+                        showGuestUI();
+                    }
+                });
             }
 
+            const clerkUser = Clerk.user;
+
+            // 3. Show dashboard instantly using Clerk identity & cached profile (if any)
+            //    This avoids waiting for Supabase and eliminates the infinite loop.
+            let cachedProfile = null;
+            try {
+                const raw = sessionStorage.getItem('cachedProfile');
+                if (raw) cachedProfile = JSON.parse(raw);
+            } catch {
+                sessionStorage.removeItem('cachedProfile');
+            }
+
+            // Immediately render with Clerk data + cached profile avatar override
+            showDashboardWithClerkAndCache(clerkUser, cachedProfile);
+
+            // 4. Now quietly refresh the profile from Supabase in the background
             await ensureProfile(clerkUser);
             const { data: profile, error } = await supabase
                 .from("profiles")
@@ -36,92 +54,67 @@
                 .eq("clerk_id", clerkUser.id)
                 .single();
 
-            // 4. Print the profile query
-            console.log(profile);
-            console.log(error);
-
-            // 5. Handle missing profile better
-            if (error) {
-                console.error(error);
+            if (error) console.error("Profile fetch error:", error);
+            if (profile) {
+                currentProfile = profile;
+                // Cache for next visit
+                sessionStorage.setItem('cachedProfile', JSON.stringify(profile));
+                // Update UI if any custom values differ from Clerk
+                showDashboardWithClerkAndCache(clerkUser, profile);
             }
-            if (!profile) {
-                await ensureProfile(clerkUser);
-                const { data } = await supabase
-                    .from("profiles")
-                    .select("*")
-                    .eq("clerk_id", clerkUser.id)
-                    .single();
-
-                if (!data) {
-                    showGuestUI();
-                    return;
-                }
-                currentProfile = data;
-                showAuthenticatedUI(data);
-                sessionStorage.setItem('cachedProfile', JSON.stringify(data));
-                return;
-            }
-
-            currentProfile = profile;
-            sessionStorage.setItem('cachedProfile', JSON.stringify(profile));
-            showAuthenticatedUI(profile);
-
         } catch (e) {
-            // 2. Log failures while debugging
             console.error("Auth failed:", e);
-            console.log("Session:", Clerk.session);
-            console.log("User:", Clerk.user);
+            console.log("Session:", Clerk?.session);
+            console.log("User:", Clerk?.user);
             showGuestUI();
         }
     }
 
+    // ── Profile upsert (idempotent) ─────────────────
     async function ensureProfile(clerkUser) {
-        const { data } = await supabase
+        // Use upsert to avoid race conditions (two simultaneous inserts)
+        const { error } = await supabase
             .from("profiles")
-            .select("id")
-            .eq("clerk_id", clerkUser.id)
-            .maybeSingle();
-        if (!data) {
-            // 3. Don't ignore insert errors
-            const { error } = await supabase.from("profiles").insert({
+            .upsert({
                 clerk_id: clerkUser.id,
-                name: clerkUser.firstName || clerkUser.username ||
+                name: clerkUser.fullName || clerkUser.firstName || clerkUser.username ||
                     (clerkUser.emailAddresses?.[0]?.emailAddress?.split('@')[0]) || 'there',
-                email: clerkUser.primaryEmailAddress?.emailAddress || '',
+                email: clerkUser.primaryEmailAddress?.emailAddress ??
+                       clerkUser.emailAddresses?.[0]?.emailAddress ?? "",
                 avatar: clerkUser.imageUrl || null
+            }, {
+                onConflict: "clerk_id"
             });
-            if (error) {
-                console.error("Profile insert error:", error);
-            }
-        }
+        if (error) console.error("Profile upsert error:", error);
     }
 
     async function openSignIn() {
         if (!window.Clerk) return;
         await Clerk.load();
-        // 7. Better sign in – relative paths
         await Clerk.redirectToSignIn({
             afterSignInUrl: "/app.html",
             afterSignUpUrl: "/app.html"
         });
     }
 
-    // ── UI Rendering ─────────────────────────────────
-    function showAuthenticatedUI(profile) {
+    // ── Unified UI rendering using Clerk as primary source ──
+    function showDashboardWithClerkAndCache(clerkUser, profileOverride = null) {
+        const displayName = clerkUser.fullName || clerkUser.firstName || 
+                            (profileOverride?.name) || 'there';
+        const avatarUrl = clerkUser.imageUrl || (profileOverride?.avatar) || null;
+
         document.getElementById('signInTopBtn').style.display = 'none';
         document.getElementById('profileAvatar').style.display = 'flex';
 
         const timeWord = getTimeGreeting();
-        document.getElementById('greetingText').textContent = `${timeWord}, ${profile.name}.`;
+        document.getElementById('greetingText').textContent = `${timeWord}, ${displayName}.`;
         document.getElementById('statusLine').textContent = 'Ready to start something new?';
 
         const avatarEl = document.getElementById('profileAvatar');
-        // 10. Show Clerk's avatar directly
-        const avatarUrl = Clerk.user?.imageUrl;
         if (avatarUrl) {
             avatarEl.innerHTML = `<img src="${avatarUrl}" alt="Profile" class="avatar-img" style="width:100%;height:100%;border-radius:50%;">`;
         } else {
-            avatarEl.textContent = (profile.name || 'A').charAt(0).toUpperCase();
+            avatarEl.textContent = displayName.charAt(0).toUpperCase();
         }
 
         const sidebarAvatar = document.getElementById('sidebarAvatarSmall');
@@ -130,11 +123,14 @@
         if (avatarUrl) {
             sidebarAvatar.innerHTML = `<img src="${avatarUrl}" alt="Profile">`;
         } else {
-            sidebarAvatar.textContent = (profile.name || 'A').charAt(0).toUpperCase();
+            sidebarAvatar.textContent = displayName.charAt(0).toUpperCase();
         }
-        sidebarName.textContent = profile.name;
+        sidebarName.textContent = displayName;
         sidebarAction.textContent = 'Manage profile →';
         sidebarAction.onclick = () => location.href = 'profile.html';
+
+        // Only call createIcons once after all DOM updates
+        lucide.createIcons();
     }
 
     function showGuestUI() {
@@ -201,7 +197,6 @@
             const emptyDiv = createEmptyState('messages-square', 'No conversations yet', 'Start chatting', 'chat.html');
             container.appendChild(emptyDiv);
             viewAll.style.display = 'none';
-            lucide.createIcons();
             return;
         }
 
@@ -268,22 +263,10 @@
 
         const chats = await fetchRecentChats();
         renderRecentChats(chats);
-        lucide.createIcons();
-
-        // 6. Dispatch the dashboard event
+        // All icons are already created inside the rendering functions, no need to call again
+        // Dispatch event for any waiting listeners
         window.__dashboardDataReady = true;
         document.dispatchEvent(new CustomEvent("dashboard-data-ready"));
-    }
-
-    // 8. Auth state listener – react to sign in/out
-    if (typeof Clerk !== 'undefined') {
-        Clerk.addListener(({ user }) => {
-            if (user) {
-                initDashboard();
-            } else {
-                showGuestUI();
-            }
-        });
     }
 
     initDashboard();

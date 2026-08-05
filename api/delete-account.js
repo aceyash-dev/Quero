@@ -41,30 +41,81 @@ export default async function handler(req, res) {
       });
     }
 
-    // Delete user data from Supabase
-    const tables = [
-      "messages",
-      "chats",
-      "settings",
-    ];
+    // Step 1: Find the profile.id from clerk_id (since chats/keys reference profiles.id, not clerk_id)
+    const { data: profile, error: profileFetchError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("clerk_id", userId)
+      .single();
 
-    for (const table of tables) {
-      const { error } = await supabase
-        .from(table)
-        .delete()
-        .eq("user_id", userId);
-
-      if (error) {
-        console.error(`Supabase delete failed (${table})`, error);
-        throw error;
-      }
+    if (profileFetchError) {
+      console.error("Failed to fetch profile:", profileFetchError);
+      throw profileFetchError;
     }
 
-    // Delete Clerk user
+    const profileId = profile?.id;
+    if (!profileId) {
+      return res.status(404).json({
+        error: "Profile not found",
+      });
+    }
+
+    console.log(`Found profile ${profileId} for clerk_id ${userId}`);
+
+    // Step 2: Delete user data from Supabase
+    // Order: keys → chats → profiles
+    // (messages cascade delete from chats via FK)
+    // Note: keys.user_id references auth.users.id (which IS the Clerk userId)
+    
+    console.log(`Deleting keys where user_id = ${userId}`);
+    const { error: keysError, count: keysCount } = await supabase
+      .from("keys")
+      .delete()
+      .eq("user_id", userId);
+
+    if (keysError) {
+      console.error("Failed to delete keys:", keysError);
+      throw keysError;
+    }
+    console.log(`Deleted ${keysCount} rows from keys`);
+
+    console.log(`Deleting chats where user_id = ${profileId}`);
+    const { error: chatsError, count: chatsCount } = await supabase
+      .from("chats")
+      .delete()
+      .eq("user_id", profileId);
+
+    if (chatsError) {
+      console.error("Failed to delete chats:", chatsError);
+      throw chatsError;
+    }
+    console.log(`Deleted ${chatsCount} rows from chats (messages cascade deleted)`);
+
+    console.log(`Deleting profile where clerk_id = ${userId}`);
+    const { error: profileError, count: profileCount } = await supabase
+      .from("profiles")
+      .delete()
+      .eq("clerk_id", userId);
+
+    if (profileError) {
+      console.error("Failed to delete profile:", profileError);
+      throw profileError;
+    }
+    console.log(`Deleted ${profileCount} rows from profiles`);
+
+    // Delete Clerk user (do this LAST so if Supabase fails, user can still retry)
+    console.log(`Deleting Clerk user ${userId}`);
     await clerk.users.deleteUser(userId);
 
     return res.status(200).json({
       success: true,
+      message: "Account and all associated data permanently deleted",
+      deletions: {
+        keys: keysCount,
+        chats: chatsCount,
+        messages: "cascaded from chats",
+        profiles: profileCount,
+      },
     });
 
   } catch (error) {

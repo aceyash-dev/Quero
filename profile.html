@@ -86,6 +86,13 @@
             color: var(--text-primary); line-height: 1.2;
         }
 
+        /* Loading indicator */
+        .loading-indicator {
+            font-family: var(--font-ui); font-size: 1rem; color: var(--text-primary);
+            padding: 16px; background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: var(--radius); margin-bottom: 24px; box-shadow: var(--shadow);
+        }
+
         /* Profile Preview */
         .profile-preview {
             background: var(--card-bg); border: 1px solid var(--border);
@@ -299,7 +306,7 @@
         <h1 class="nav__title">Profile</h1>
     </div>
 
-    <div class="loading-indicator hidden" id="loadingIndicator">Loading your profile…</div>
+    <div class="loading-indicator" id="loadingIndicator">Loading your profile…</div>
 
     <!-- Profile Preview -->
     <div class="profile-preview hidden" id="profilePreview">
@@ -512,6 +519,12 @@
         setTimeout(() => toast.remove(), 2600);
     }
 
+    function setLoadingMessage(msg, isError = false) {
+        const el = document.getElementById('loadingIndicator');
+        el.textContent = msg;
+        if (isError) el.style.color = '#C53030';
+    }
+
     // ─────────────────────────────────────────────
     // Render UI from live state
     // ─────────────────────────────────────────────
@@ -591,41 +604,55 @@
     }
 
     // ─────────────────────────────────────────────
-    // Initialization
+    // Initialization (with detailed error logging)
     // ─────────────────────────────────────────────
     async function init() {
-        const loadingEl = document.getElementById('loadingIndicator');
-        loadingEl.classList.remove('hidden');
-
         try {
-            if (typeof Clerk === 'undefined') throw new Error('Clerk script failed to load.');
+            console.log('[1/5] Checking Clerk...');
+            if (!window.Clerk) {
+                throw new Error('Clerk SDK failed to load. Check your publishable key and network.');
+            }
 
+            console.log('[2/5] Loading Clerk...');
             await Clerk.load();
+
             if (!Clerk.user) {
-                loadingEl.textContent = 'Please sign in to view your profile.';
+                setLoadingMessage('Please sign in to view your profile.', false);
                 return;
             }
+
             clerkUser = Clerk.user;
+            console.log('[3/5] Clerk user loaded:', clerkUser.id);
 
             // Initialize Supabase
+            if (!window.supabase) {
+                throw new Error('Supabase SDK failed to load from CDN.');
+            }
+
+            console.log('[4/5] Initializing Supabase...');
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
             // Fetch or create profile
+            console.log('[5/5] Fetching profile from Supabase...');
             const { data: existingProfile, error: fetchError } = await supabase
                 .from('profiles')
                 .select('*')
-                .eq('id', clerkUser.id)
+                .eq('clerk_id', clerkUser.id)
                 .single();
 
             if (fetchError && fetchError.code !== 'PGRST116') {
-                console.warn('Fetch profile warning:', fetchError);
+                console.warn('Fetch profile error:', fetchError);
+                // Show warning but continue with default profile
+                setLoadingMessage(`⚠ Warning fetching profile: ${fetchError.message}`, false);
             }
 
             if (existingProfile) {
                 supabaseProfile = existingProfile;
+                console.log('✓ Existing profile loaded');
             } else {
+                console.log('Creating new profile...');
                 const newProfile = {
-                    id: clerkUser.id,
+                    clerk_id: clerkUser.id,
                     username: clerkUser.username || '',
                     display_name: clerkUser.fullName || '',
                     bio: '',
@@ -636,6 +663,7 @@
                     verified: false,
                     updated_at: new Date().toISOString(),
                 };
+
                 const { data: inserted, error: insertError } = await supabase
                     .from('profiles')
                     .insert(newProfile)
@@ -643,30 +671,35 @@
                     .single();
 
                 if (insertError) {
-                    console.error('Failed to create profile:', insertError);
+                    console.error('Insert profile error:', insertError);
+                    // Use local profile if insert fails (will be lost on refresh)
                     supabaseProfile = newProfile;
                 } else {
                     supabaseProfile = inserted;
+                    console.log('✓ Profile created');
                 }
             }
 
             // Show UI
-            loadingEl.classList.add('hidden');
+            document.getElementById('loadingIndicator').classList.add('hidden');
             document.getElementById('profilePreview').classList.remove('hidden');
             document.getElementById('profileCard').classList.remove('hidden');
             document.getElementById('accountCard').classList.remove('hidden');
 
             renderAll();
 
-            // Listen for Clerk changes
-            Clerk.addListener(() => {
-                clerkUser = Clerk.user;
-                renderAll();
-            });
+            // Setup Clerk listener (safely, in case it doesn't exist)
+            if (typeof Clerk.addListener === 'function') {
+                Clerk.addListener(() => {
+                    clerkUser = Clerk.user;
+                    renderAll();
+                });
+            }
+
+            console.log('✓ Profile page initialized');
         } catch (err) {
             console.error('Init error:', err);
-            loadingEl.textContent = 'Something went wrong. Please refresh.';
-            loadingEl.style.color = '#C53030';
+            setLoadingMessage(`Error: ${err?.message || String(err)}`, true);
         }
     }
 
@@ -730,7 +763,7 @@
             const { error } = await supabase
                 .from('profiles')
                 .update(newData)
-                .eq('id', clerkUser.id);
+                .eq('clerk_id', clerkUser.id);
 
             saveBtn.disabled = false;
             saveBtn.textContent = originalText;
@@ -785,12 +818,11 @@
                 const { error } = await supabase
                     .from('profiles')
                     .update({ username: newUsername, updated_at: new Date().toISOString() })
-                    .eq('id', clerkUser.id);
+                    .eq('clerk_id', clerkUser.id);
 
                 if (error) {
-                    // Rollback? In production you'd want to revert Clerk, but for simplicity we show error.
                     showToast('Supabase update failed, but Clerk username changed.');
-                    console.error(error);
+                    console.error('Supabase error:', error);
                 } else {
                     supabaseProfile.username = newUsername;
                 }
@@ -921,7 +953,7 @@
                 const { error } = await supabase
                     .from('profiles')
                     .update({ banner_url: publicUrl, updated_at: new Date().toISOString() })
-                    .eq('id', clerkUser.id);
+                    .eq('clerk_id', clerkUser.id);
 
                 if (error) throw error;
 
@@ -946,7 +978,7 @@
                 const { error } = await supabase
                     .from('profiles')
                     .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
-                    .eq('id', clerkUser.id);
+                    .eq('clerk_id', clerkUser.id);
 
                 if (error) throw error;
 
@@ -960,7 +992,7 @@
             }
         });
 
-        // Sessions (using Clerk user sessions)
+        // Sessions (limited — Clerk SDK doesn't expose full session list)
         document.getElementById('rowSessions').addEventListener('click', async () => {
             const card = document.getElementById('sessionsCard');
             card.classList.remove('hidden');
@@ -972,22 +1004,9 @@
             }
 
             try {
-                const sessions = clerkUser.sessions || [];
-                if (sessions.length === 0) {
-                    list.innerHTML = '<div class="profile-field__value">No active sessions found.</div>';
-                    return;
-                }
-
-                list.innerHTML = sessions.map(s => {
-                    const browser = s.latestActivity?.browserName || 'Unknown browser';
-                    const device = s.latestActivity?.deviceType || 'Unknown device';
-                    const isActive = s.status === 'active';
-                    const lastActive = s.lastActiveAt ? new Date(s.lastActiveAt).toLocaleString() : 'Unknown';
-                    return `<div class="profile-field__value" style="margin-bottom:8px;">
-                        ${escapeHTML(browser)} on ${escapeHTML(device)}
-                        ${isActive ? ' · <span style="color:#2F855A;font-weight:500;">Active now</span>' : ` · Last active: ${escapeHTML(lastActive)}`}
-                    </div>`;
-                }).join('');
+                // Clerk SDK doesn't expose current user sessions list in frontend SDK.
+                // For now, show a message to implement on backend.
+                list.innerHTML = '<div class="profile-field__value" style="color:var(--text-secondary);">Sessions management requires backend integration. Coming soon.</div>';
             } catch (err) {
                 list.innerHTML = '<div class="profile-field__value" style="color:#C53030;">Unable to load sessions.</div>';
             }

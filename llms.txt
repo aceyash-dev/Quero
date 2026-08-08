@@ -1,13 +1,19 @@
 # Quero
 
-Official website:
-https://quero.indevs.in
+> Quero is an AI workspace for research, browsing, file management, tool integrations, and multi-step automation.
 
-Description:
-Quero is an AI workspace for research, AI conversations and file management.
+## Product
 
-Privacy:
-https://quero.indevs.in/privacy
+- [Homepage](https://quero.indevs.in/): Overview of Quero.
+- [Privacy](https://quero.indevs.in/privacy): Privacy policy.
+- [Terms](https://quero.indevs.in/terms): Terms of service.
 
-Terms:
-https://quero.indevs.in/terms
+## Capabilities
+
+- Research and summarization.
+- Web browsing.
+- Document generation.
+- Code writing.
+- API and MCP integrations.
+- Workflow automation.
+- Persistent context and memory.

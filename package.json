@@ -1,9 +1,0 @@
-{
-  "name": "quero",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "@clerk/backend": "2.18.0",
-    "@supabase/supabase-js": "2.57.0"
-  }
-}

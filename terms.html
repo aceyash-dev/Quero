@@ -8,8 +8,19 @@
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
 
-  <meta name="theme-color" content="#000000">
-  <meta name="color-scheme" content="dark">
+  <meta
+    name="theme-color"
+    content="#000000"
+    media="(prefers-color-scheme: dark)"
+  >
+
+  <meta
+    name="theme-color"
+    content="#f7f7f5"
+    media="(prefers-color-scheme: light)"
+  >
+
+  <meta name="color-scheme" content="light dark">
 
   <meta
     name="description"
@@ -42,17 +53,40 @@
     }
 
     :root {
-      --black: #000;
-      --surface: #0d0e0d;
-      --surface-2: #111311;
+      color-scheme: light dark;
 
-      --white: #f1f1ed;
-      --soft: #d7d8d3;
-      --muted: #9a9c97;
-      --dim: #646762;
+      /* =====================================================
+         LIGHT THEME
+         ===================================================== */
 
-      --border: rgba(241,241,237,.12);
-      --border-soft: rgba(241,241,237,.07);
+      --bg: #f7f7f5;
+      --bg-elevated: #ffffff;
+      --surface: #eeeeeb;
+      --surface-2: #e6e6e2;
+
+      --text: #0a0a0a;
+      --text-soft: #30312e;
+      --text-muted: #686a65;
+      --text-dim: #8b8d88;
+
+      --border: rgba(10,10,10,.13);
+      --border-soft: rgba(10,10,10,.075);
+
+      --grid-line: rgba(10,10,10,.035);
+      --shape-border: rgba(10,10,10,.055);
+      --shape-bg: rgba(10,10,10,.012);
+
+      --nav-bg: rgba(255,255,255,.88);
+      --toc-bg: rgba(255,255,255,.72);
+      --contact-bg: rgba(10,10,10,.018);
+
+      --selection-bg: #0a0a0a;
+      --selection-text: #ffffff;
+
+      --shadow:
+        0 18px 60px rgba(10,10,10,.12);
+
+      --noise-opacity: .012;
 
       --ui: "Outfit", system-ui, sans-serif;
       --mono: "Departure Mono", monospace;
@@ -64,6 +98,47 @@
       --ease: cubic-bezier(.22,1,.36,1);
     }
 
+    /* =====================================================
+       DARK THEME
+       ===================================================== */
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --bg-elevated: #080908;
+        --surface: #0d0e0d;
+        --surface-2: #111311;
+
+        --text: #f1f1ed;
+        --text-soft: #d7d8d3;
+        --text-muted: #9a9c97;
+        --text-dim: #646762;
+
+        --border: rgba(241,241,237,.12);
+        --border-soft: rgba(241,241,237,.07);
+
+        --grid-line: rgba(241,241,237,.018);
+        --shape-border: rgba(241,241,237,.035);
+        --shape-bg: rgba(241,241,237,.006);
+
+        --nav-bg: rgba(0,0,0,.88);
+        --toc-bg: rgba(13,14,13,.65);
+        --contact-bg: rgba(241,241,237,.008);
+
+        --selection-bg: #f1f1ed;
+        --selection-text: #000000;
+
+        --shadow:
+          0 18px 60px rgba(0,0,0,.55);
+
+        --noise-opacity: .018;
+      }
+    }
+
+    /* =====================================================
+       RESET
+       ===================================================== */
+
     *,
     *::before,
     *::after {
@@ -72,9 +147,9 @@
 
     html {
       min-width: 320px;
-      background: var(--black);
-      color: var(--white);
-      color-scheme: dark;
+      background: var(--bg);
+      color: var(--text);
+      color-scheme: light dark;
       scroll-behavior: smooth;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
@@ -84,20 +159,25 @@
       margin: 0;
       min-width: 320px;
       overflow-x: hidden;
-      background: var(--black);
-      color: var(--white);
+      background: var(--bg);
+      color: var(--text);
       font-family: var(--ui);
       line-height: 1.7;
     }
 
     ::selection {
-      background: var(--white);
-      color: var(--black);
+      background: var(--selection-bg);
+      color: var(--selection-text);
     }
 
     a {
       color: inherit;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    button,
+    input {
+      font: inherit;
     }
 
     svg {
@@ -107,12 +187,16 @@
       flex: 0 0 auto;
     }
 
+    /* =====================================================
+       NOISE
+       ===================================================== */
+
     .noise {
       position: fixed;
       inset: 0;
       z-index: 1000;
       pointer-events: none;
-      opacity: .018;
+      opacity: var(--noise-opacity);
       background-image:
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
@@ -133,33 +217,48 @@
     .nav-inner {
       min-height: 58px;
       padding: 7px 9px;
+
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #000;
+
+      background: var(--nav-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+
+      box-shadow: var(--shadow);
+
+      -webkit-backdrop-filter: blur(18px) saturate(120%);
+      backdrop-filter: blur(18px) saturate(120%);
     }
 
     .brand {
+      min-width: 0;
+
       display: inline-flex;
       align-items: center;
       gap: 9px;
+
       padding-left: 3px;
-      color: var(--white);
+
+      color: var(--text);
       text-decoration: none;
     }
 
     .brand-mark {
       width: 31px;
       height: 31px;
+
       display: grid;
       place-items: center;
+
       overflow: hidden;
       flex: 0 0 auto;
+
       border: 1px solid var(--border);
       border-radius: 9px;
+
+      background: var(--surface);
     }
 
     .brand-mark img {
@@ -181,14 +280,18 @@
     .back-link,
     .nav-cta {
       min-height: 40px;
+
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+
       border-radius: var(--radius-md);
       text-decoration: none;
+
       font-size: .77rem;
       font-weight: 600;
+
       transition:
         transform .3s var(--ease),
         background .25s ease,
@@ -197,23 +300,23 @@
 
     .back-link {
       padding: 0 13px;
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
     .back-link:hover {
-      color: var(--white);
-      background: rgba(241,241,237,.06);
+      color: var(--text);
+      background: var(--surface);
     }
 
     .nav-cta {
       padding: 0 16px;
-      background: var(--white);
-      color: var(--black);
+      background: var(--text);
+      color: var(--bg);
     }
 
     .nav-cta:hover {
       transform: translateY(-1px);
-      background: #fff;
+      opacity: .9;
     }
 
     /* =====================================================
@@ -224,19 +327,31 @@
       position: fixed;
       inset: 0;
       z-index: -2;
+
       pointer-events: none;
+
       opacity: .45;
+
       background-image:
         linear-gradient(
-          rgba(241,241,237,.018) 1px,
+          var(--grid-line) 1px,
           transparent 1px
         ),
         linear-gradient(
           90deg,
-          rgba(241,241,237,.018) 1px,
+          var(--grid-line) 1px,
           transparent 1px
         );
+
       background-size: 72px 72px;
+
+      -webkit-mask-image:
+        radial-gradient(
+          circle at 50% 10%,
+          black,
+          transparent 70%
+        );
+
       mask-image:
         radial-gradient(
           circle at 50% 10%,
@@ -248,14 +363,19 @@
     .page-shape {
       position: fixed;
       z-index: -1;
+
       width: 320px;
       aspect-ratio: 1;
+
       pointer-events: none;
-      border: 1px solid rgba(241,241,237,.035);
-      background: rgba(241,241,237,.006);
+
+      border: 1px solid var(--shape-border);
+      background: var(--shape-bg);
+
       border-radius:
         43% 57% 62% 38%
         / 44% 42% 58% 56%;
+
       animation: morph 18s ease-in-out infinite;
     }
 
@@ -277,6 +397,7 @@
           translate3d(70px,-35px,0)
           rotate(14deg)
           scale(1.05);
+
         border-radius:
           62% 38% 44% 56%
           / 56% 43% 57% 44%;
@@ -290,6 +411,7 @@
     .page-header {
       width: min(1120px, calc(100% - 40px));
       margin: 0 auto;
+
       padding:
         clamp(150px, 19vw, 210px)
         0
@@ -299,7 +421,7 @@
     .eyebrow,
     .section-label,
     .updated {
-      color: var(--muted);
+      color: var(--text-muted);
       font-family: var(--mono);
       font-size: .63rem;
       letter-spacing: .08em;
@@ -310,34 +432,40 @@
     .section-label::before {
       content: "/";
       margin-right: 8px;
-      color: var(--white);
+      color: var(--text);
     }
 
     .page-title {
       max-width: 900px;
       margin: 20px 0 0;
+
+      color: var(--text);
+
       font-size: clamp(3.5rem, 9vw, 7.8rem);
       line-height: .88;
       letter-spacing: -.075em;
       font-weight: 560;
+
       overflow-wrap: anywhere;
     }
 
     .page-title span {
-      color: #686a65;
+      color: var(--text-muted);
     }
 
     .page-intro {
       max-width: 660px;
       margin: 32px 0 0;
-      color: var(--soft);
+
+      color: var(--text-soft);
+
       font-size: clamp(1rem, 2vw, 1.12rem);
       line-height: 1.8;
     }
 
     .updated {
       margin-top: 25px;
-      color: var(--dim);
+      color: var(--text-dim);
       letter-spacing: .05em;
     }
 
@@ -353,7 +481,11 @@
 
     .legal-layout {
       display: grid;
-      grid-template-columns: 220px minmax(0,760px);
+
+      grid-template-columns:
+        220px
+        minmax(0, 760px);
+
       justify-content: space-between;
       gap: 60px;
       align-items: start;
@@ -362,15 +494,23 @@
     .toc {
       position: sticky;
       top: 96px;
+
       padding: 20px;
+
       border: 1px solid var(--border-soft);
       border-radius: var(--radius-lg);
-      background: rgba(13,14,13,.65);
+
+      background: var(--toc-bg);
+
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
     }
 
     .toc-title {
       margin-bottom: 12px;
-      color: var(--dim);
+
+      color: var(--text-dim);
+
       font-family: var(--mono);
       font-size: .58rem;
       letter-spacing: .08em;
@@ -380,14 +520,20 @@
     .toc a {
       display: block;
       padding: 7px 0;
-      color: var(--muted);
+
+      color: var(--text-muted);
       text-decoration: none;
+
       font-size: .78rem;
       line-height: 1.35;
+
+      transition:
+        color .2s ease,
+        transform .2s ease;
     }
 
     .toc a:hover {
-      color: var(--white);
+      color: var(--text);
     }
 
     .legal {
@@ -397,7 +543,9 @@
     .legal-section {
       padding: 0 0 58px;
       margin-bottom: 58px;
+
       border-bottom: 1px solid var(--border);
+
       scroll-margin-top: 100px;
     }
 
@@ -411,15 +559,22 @@
 
     .legal h2 {
       margin: 0 0 20px;
+
+      color: var(--text);
+
       font-size: clamp(1.7rem, 4vw, 2.6rem);
       line-height: 1;
       letter-spacing: -.045em;
       font-weight: 560;
+
       overflow-wrap: anywhere;
     }
 
     .legal h3 {
       margin: 30px 0 10px;
+
+      color: var(--text);
+
       font-size: 1rem;
       line-height: 1.3;
       font-weight: 600;
@@ -428,9 +583,12 @@
     .legal p {
       max-width: 720px;
       margin: 0 0 17px;
-      color: var(--soft);
+
+      color: var(--text-soft);
+
       font-size: .94rem;
       line-height: 1.85;
+
       overflow-wrap: anywhere;
     }
 
@@ -443,21 +601,26 @@
     .legal li {
       margin: 9px 0;
       padding-left: 5px;
-      color: var(--soft);
+
+      color: var(--text-soft);
+
       font-size: .94rem;
       line-height: 1.8;
+
       overflow-wrap: anywhere;
     }
 
     .legal li::marker {
-      color: var(--dim);
+      color: var(--text-dim);
     }
 
     .note {
       margin: 24px 0;
       padding: 20px 22px;
+
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
+
       background: var(--surface);
     }
 
@@ -465,20 +628,29 @@
       margin: 0;
     }
 
+    /* =====================================================
+       CONTACT
+       ===================================================== */
+
     .contact-card {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
+
       margin-top: 30px;
+
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
+
       overflow: hidden;
     }
 
     .contact-item {
       min-width: 0;
       padding: 20px;
+
       border-right: 1px solid var(--border);
-      background: rgba(241,241,237,.008);
+
+      background: var(--contact-bg);
     }
 
     .contact-item:last-child {
@@ -488,31 +660,41 @@
     .contact-icon {
       width: 36px;
       height: 36px;
+
       display: grid;
       place-items: center;
+
       margin-bottom: 22px;
+
       border: 1px solid var(--border);
       border-radius: 10px;
+
+      color: var(--text);
+      background: var(--surface);
     }
 
     .contact-item small {
       display: block;
       margin-bottom: 6px;
-      color: var(--dim);
+
+      color: var(--text-dim);
+
       font-family: var(--mono);
       font-size: .57rem;
       text-transform: uppercase;
     }
 
     .contact-item a {
-      color: var(--soft);
+      color: var(--text-soft);
       text-decoration: none;
+
       font-size: .82rem;
+
       overflow-wrap: anywhere;
     }
 
     .contact-item a:hover {
-      color: var(--white);
+      color: var(--text);
     }
 
     /* =====================================================
@@ -525,15 +707,21 @@
 
     .footer-inner {
       width: min(1120px, calc(100% - 40px));
+
       min-height: 90px;
+
       margin: auto;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
+
       gap: 20px;
     }
 
     .footer-brand {
+      color: var(--text);
+
       font-weight: 650;
       letter-spacing: -.025em;
     }
@@ -543,7 +731,9 @@
       flex-wrap: wrap;
       justify-content: flex-end;
       gap: 16px;
-      color: var(--muted);
+
+      color: var(--text-muted);
+
       font-family: var(--mono);
       font-size: .57rem;
     }
@@ -554,12 +744,22 @@
     }
 
     .footer-meta a:hover {
-      color: var(--white);
+      color: var(--text);
     }
 
     /* =====================================================
        RESPONSIVE
        ===================================================== */
+
+    @media (max-width: 1000px) {
+      .legal-layout {
+        grid-template-columns:
+          190px
+          minmax(0, 1fr);
+
+        gap: 40px;
+      }
+    }
 
     @media (max-width: 820px) {
       .legal-layout {
@@ -569,10 +769,13 @@
 
       .toc {
         position: static;
+
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+
         gap: 3px 14px;
+
         padding: 15px 17px;
       }
 
@@ -658,9 +861,14 @@
         font-size: .9rem;
       }
 
+      .note {
+        padding: 17px 18px;
+      }
+
       .footer-inner {
         min-height: 120px;
         padding: 25px 0;
+
         align-items: flex-start;
         flex-direction: column;
       }
@@ -669,6 +877,42 @@
         justify-content: flex-start;
       }
     }
+
+    @media (max-width: 380px) {
+      .nav-inner {
+        gap: 5px;
+        padding-inline: 6px;
+      }
+
+      .brand-mark {
+        width: 29px;
+        height: 29px;
+      }
+
+      .back-link,
+      .nav-cta {
+        min-height: 38px;
+        font-size: .72rem;
+      }
+
+      .nav-cta {
+        padding-inline: 10px;
+      }
+
+      .page-header,
+      .content,
+      .footer-inner {
+        width: calc(100% - 24px);
+      }
+
+      .page-title {
+        font-size: clamp(3rem, 18vw, 4.5rem);
+      }
+    }
+
+    /* =====================================================
+       REDUCED MOTION
+       ===================================================== */
 
     @media (prefers-reduced-motion: reduce) {
       html {
@@ -689,24 +933,54 @@
 <body>
 
   <div class="noise" aria-hidden="true"></div>
-  <div class="page-grid" aria-hidden="true"></div>
-  <div class="page-shape page-shape-a" aria-hidden="true"></div>
-  <div class="page-shape page-shape-b" aria-hidden="true"></div>
 
-  <nav class="nav" aria-label="Primary navigation">
+  <div class="page-grid" aria-hidden="true"></div>
+
+  <div
+    class="page-shape page-shape-a"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="page-shape page-shape-b"
+    aria-hidden="true"
+  ></div>
+
+  <nav
+    class="nav"
+    aria-label="Primary navigation"
+  >
     <div class="nav-inner">
 
-      <a class="brand" href="/" aria-label="Quero home">
+      <a
+        class="brand"
+        href="/"
+        aria-label="Quero home"
+      >
         <span class="brand-mark">
-          <img src="quero.png" alt="" width="31" height="31">
+          <img
+            src="quero.png"
+            alt=""
+            width="32"
+            height="32"
+          >
         </span>
-        <span class="brand-name">Quero</span>
+
+        <span class="brand-name">
+          Quero
+        </span>
       </a>
 
       <div class="nav-spacer"></div>
 
-      <a class="back-link" href="/">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+      <a
+        class="back-link"
+        href="/"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
           <path
             d="M19 12H5m7 7-7-7 7-7"
             fill="none"
@@ -716,12 +990,22 @@
             stroke-linejoin="round"
           />
         </svg>
-        <span>Back home</span>
+
+        <span>
+          Back home
+        </span>
       </a>
 
-      <a class="nav-cta" href="/app">
+      <a
+        class="nav-cta"
+        href="/app"
+      >
         Ask Quero
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
           <path
             d="M5 19 19 5M8 5h11v11"
             fill="none"
@@ -756,7 +1040,7 @@
       </p>
 
       <div class="updated">
-        Last updated / August 19, 2026
+        Last updated / August 1, 2026
       </div>
 
     </header>
@@ -765,23 +1049,56 @@
 
       <div class="legal-layout">
 
-        <aside class="toc" aria-label="On this page">
-          <div class="toc-title">On this page</div>
-          <a href="#acceptance">Acceptance</a>
-          <a href="#using">Using Quero</a>
-          <a href="#content">Your content</a>
-          <a href="#ai">AI output</a>
-          <a href="#availability">Availability</a>
-          <a href="#termination">Termination</a>
-          <a href="#contact">Contact</a>
+        <aside
+          class="toc"
+          aria-label="On this page"
+        >
+          <div class="toc-title">
+            On this page
+          </div>
+
+          <a href="#acceptance">
+            Acceptance
+          </a>
+
+          <a href="#using">
+            Using Quero
+          </a>
+
+          <a href="#content">
+            Your content
+          </a>
+
+          <a href="#ai">
+            AI output
+          </a>
+
+          <a href="#availability">
+            Availability
+          </a>
+
+          <a href="#termination">
+            Termination
+          </a>
+
+          <a href="#contact">
+            Contact
+          </a>
         </aside>
 
         <article class="legal">
 
-          <section class="legal-section" id="acceptance">
-            <div class="section-label">01 / Agreement</div>
+          <section
+            class="legal-section"
+            id="acceptance"
+          >
+            <div class="section-label">
+              01 / Agreement
+            </div>
 
-            <h2>Accepting these terms</h2>
+            <h2>
+              Accepting these terms
+            </h2>
 
             <p>
               By accessing or using Quero, you agree to these
@@ -797,10 +1114,17 @@
             </p>
           </section>
 
-          <section class="legal-section" id="using">
-            <div class="section-label">02 / Use</div>
+          <section
+            class="legal-section"
+            id="using"
+          >
+            <div class="section-label">
+              02 / Use
+            </div>
 
-            <h2>Using Quero responsibly</h2>
+            <h2>
+              Using Quero responsibly
+            </h2>
 
             <p>
               Quero is intended to help people think, explore,
@@ -808,28 +1132,35 @@
               agree to use the service lawfully and responsibly.
             </p>
 
-            <p>You must not use Quero to:</p>
+            <p>
+              You must not use Quero to:
+            </p>
 
             <ul>
               <li>
                 Break applicable laws or regulations.
               </li>
+
               <li>
                 Infringe another person's rights or intellectual
                 property.
               </li>
+
               <li>
                 Attempt to gain unauthorized access to systems,
                 accounts, or data.
               </li>
+
               <li>
                 Interfere with or abuse the operation of the
                 service.
               </li>
+
               <li>
                 Distribute malware, malicious code, or other
                 harmful material.
               </li>
+
               <li>
                 Misrepresent your identity or relationship with
                 Quero.
@@ -844,10 +1175,17 @@
             </div>
           </section>
 
-          <section class="legal-section" id="content">
-            <div class="section-label">03 / Content</div>
+          <section
+            class="legal-section"
+            id="content"
+          >
+            <div class="section-label">
+              03 / Content
+            </div>
 
-            <h2>Your content</h2>
+            <h2>
+              Your content
+            </h2>
 
             <p>
               You retain rights you already have in content you
@@ -874,10 +1212,17 @@
             </p>
           </section>
 
-          <section class="legal-section" id="ai">
-            <div class="section-label">04 / Intelligence</div>
+          <section
+            class="legal-section"
+            id="ai"
+          >
+            <div class="section-label">
+              04 / Intelligence
+            </div>
 
-            <h2>AI-generated output</h2>
+            <h2>
+              AI-generated output
+            </h2>
 
             <p>
               Quero may provide responses generated by artificial
@@ -905,10 +1250,17 @@
             </p>
           </section>
 
-          <section class="legal-section" id="availability">
-            <div class="section-label">05 / Service</div>
+          <section
+            class="legal-section"
+            id="availability"
+          >
+            <div class="section-label">
+              05 / Service
+            </div>
 
-            <h2>Availability and changes</h2>
+            <h2>
+              Availability and changes
+            </h2>
 
             <p>
               We aim to keep Quero available and reliable, but
@@ -930,10 +1282,17 @@
             </p>
           </section>
 
-          <section class="legal-section" id="termination">
-            <div class="section-label">06 / Ending use</div>
+          <section
+            class="legal-section"
+            id="termination"
+          >
+            <div class="section-label">
+              06 / Ending use
+            </div>
 
-            <h2>Suspension and termination</h2>
+            <h2>
+              Suspension and termination
+            </h2>
 
             <p>
               You may stop using Quero at any time.
@@ -954,10 +1313,17 @@
             </p>
           </section>
 
-          <section class="legal-section" id="contact">
-            <div class="section-label">07 / Contact</div>
+          <section
+            class="legal-section"
+            id="contact"
+          >
+            <div class="section-label">
+              07 / Contact
+            </div>
 
-            <h2>Questions or concerns</h2>
+            <h2>
+              Questions or concerns
+            </h2>
 
             <p>
               For questions about these Terms of Service or the
@@ -967,8 +1333,12 @@
             <div class="contact-card">
 
               <div class="contact-item">
+
                 <div class="contact-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
                     <rect
                       x="3"
                       y="4"
@@ -979,6 +1349,7 @@
                       stroke="currentColor"
                       stroke-width="1.7"
                     />
+
                     <path
                       d="m4 7 8 6 8-6"
                       fill="none"
@@ -990,16 +1361,23 @@
                   </svg>
                 </div>
 
-                <small>Email</small>
+                <small>
+                  Email
+                </small>
 
                 <a href="mailto:support@quero.indevs.in">
                   support@quero.indevs.in
                 </a>
+
               </div>
 
               <div class="contact-item">
+
                 <div class="contact-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
                     <path
                       d="M15 22v-4a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v4"
                       fill="none"
@@ -1007,6 +1385,7 @@
                       stroke-width="1.7"
                       stroke-linecap="round"
                     />
+
                     <circle
                       cx="9"
                       cy="7"
@@ -1015,6 +1394,7 @@
                       stroke="currentColor"
                       stroke-width="1.7"
                     />
+
                     <path
                       d="M17 8a4 4 0 0 1 0 8"
                       fill="none"
@@ -1025,7 +1405,9 @@
                   </svg>
                 </div>
 
-                <small>GitHub</small>
+                <small>
+                  GitHub
+                </small>
 
                 <a
                   href="https://github.com/The-Ace-Base"
@@ -1034,11 +1416,16 @@
                 >
                   @The-Ace-Base
                 </a>
+
               </div>
 
               <div class="contact-item">
+
                 <div class="contact-icon">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
                     <circle
                       cx="12"
                       cy="12"
@@ -1047,6 +1434,7 @@
                       stroke="currentColor"
                       stroke-width="1.7"
                     />
+
                     <path
                       d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"
                       fill="none"
@@ -1056,7 +1444,9 @@
                   </svg>
                 </div>
 
-                <small>Website</small>
+                <small>
+                  Website
+                </small>
 
                 <a
                   href="https://ace-base.indevs.in"
@@ -1065,6 +1455,7 @@
                 >
                   ace-base.indevs.in
                 </a>
+
               </div>
 
             </div>
@@ -1086,10 +1477,21 @@
       </div>
 
       <div class="footer-meta">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="/">Home</a>
-        <span>© 2026 The Ace Base</span>
+        <a href="privacy.html">
+          Privacy
+        </a>
+
+        <a href="terms.html">
+          Terms
+        </a>
+
+        <a href="/">
+          Home
+        </a>
+
+        <span>
+          © 2026 The Ace Base
+        </span>
       </div>
 
     </div>

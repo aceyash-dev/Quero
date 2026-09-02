@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import LanguageProvider from "@/components/LanguageProvider";
 
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
@@ -15,21 +16,9 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Quero is a new way to explore curiosity. Ask better questions, follow ideas further, and turn curiosity into understanding.",
+    "Ask better questions. Follow ideas further. Curiosity answered.",
 
   applicationName: "Quero",
-
-  keywords: [
-    "Quero",
-    "Curiosity Answered",
-    "AI",
-    "questions",
-    "answers",
-    "knowledge",
-    "learning",
-    "research",
-    "exploration",
-  ],
 
   authors: [
     {
@@ -43,6 +32,7 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+
     googleBot: {
       index: true,
       follow: true,
@@ -56,7 +46,7 @@ export const metadata: Metadata = {
     type: "website",
     title: "Quero. | Curiosity Answered.",
     description:
-      "Ask better questions. Follow ideas further. Turn curiosity into understanding.",
+      "Ask better questions. Follow ideas further. Curiosity answered.",
     siteName: "Quero.",
     locale: "en_US",
   },
@@ -65,13 +55,23 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Quero. | Curiosity Answered.",
     description:
-      "Ask better questions. Follow ideas further. Turn curiosity into understanding.",
+      "Ask better questions. Follow ideas further. Curiosity answered.",
   },
 
   category: "technology",
 
   icons: {
-    icon: "/icon.png",
+    icon: [
+      {
+        url: "/favicon.ico",
+        type: "image/x-icon",
+      },
+      {
+        url: "/icon.png",
+        type: "image/png",
+      },
+    ],
+
     apple: "/icon.png",
   },
 };
@@ -83,7 +83,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={instrumentSerif.variable}>
-      <body>{children}</body>
+      <body>
+        <LanguageProvider />
+        {children}
+      </body>
     </html>
   );
 }

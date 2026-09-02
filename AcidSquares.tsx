@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle, RenderTarget } from 'ogl';
 import './AcidSquares.css';

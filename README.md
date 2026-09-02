@@ -1,6 +1,18 @@
-# Quero
+# Quero.
 
-Curiosity Answered.
+> Curiosity Answered.
+
+<p align="center">
+  <img src="./public/icon.png" alt="Quero." width="96" />
+</p>
+
+Quero is a quieter AI experience built around curiosity, thoughtful answers, and deeper exploration.
+
+**Ask better questions. Follow ideas further. Curiosity answered.**
+
+## Status
+
+🚧 In active development.
 
 ## Stack
 
@@ -13,7 +25,6 @@ Curiosity Answered.
 
 ## Development
 
-Install dependencies:
-
 ```bash
 npm install
+npm run dev
